@@ -153,6 +153,31 @@ Correct usage! Your flag: pwn.college{gfrvzSvfGzI50i4U0tKmlAsqD-C.QX1EDO0wSM3gjN
 https://pwn.college/linux-luminarium/man/ - Searching Manuals
 
 # Searching for manuals
+This challenge needs you to look for the right command to use in the manual of manual
+## My solve
+**Flag** `pwn.college{sYX13Sm98O7-XfNngE9YuEbSMZQ.QX2EDO0wSM3gjNzEzW}`
+1. Connect to the dojo host using the ssh command.
+```bash
+hunaid@Hunaids-MacBook-Pro ~ % ssh -i ./key hacker@dojo.pwn.college
+Connected!                                                                        
+hacker@man~searching-for-manuals:~$
+```
+2. Use `man man` to open the manual then search for stuff related to `-k` then use the command `man -k challenge` to print out the code.
+```bash
+hacker@man~searching-for-manuals:~$ man man
+hacker@man~searching-for-manuals:~$ man -k challenge
+smfngubwgj (1)       - print the flag!
+```
+3. Use the `man` command with the code. That manual includes the argument which will print the flag with the `/challenge/challenge` command.
+```bash
+hacker@man~searching-for-manuals:~$ man smfngubwgj
+hacker@man~searching-for-manuals:~$ /challenge/challenge --smfngu 139
+Correct usage! Your flag: pwn.college{sYX13Sm98O7-XfNngE9YuEbSMZQ.QX2EDO0wSM3gjNzEzW}
+```
+## What i learned
+1. You can read the manual for the manual command using man man which provides all the details about the command and the arguments and the uses of them.
+## References
+https://pwn.college/linux-luminarium/man/ - Searching for manuals.
 
 # Helpful Programs
 This challenge requires you to use the `--help` command to print the flag value.
