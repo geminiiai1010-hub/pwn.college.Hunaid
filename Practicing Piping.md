@@ -361,7 +361,44 @@ pwn.college{4sJisc0BPDw4UZVeb3WxlggxFwA.0FOxEzNxwSM3gjNzEzW}
 ## References
 https://pwn.college/linux-luminarium/piping/ - Filtering with grep -v
 
-# Duplicating Piped Data
+# Duplicating Piped Data with tee
+This challenge we have to we have to pipe data from one command to another.
+## My solve
+**Flag** `pwn.college{gnzw5wwQNSF93kioS_WkUhr64AB.QXxITO0wSM3gjNzEzW}`
+1. Connect to the dojo host using the ssh command.
+```bash
+hunaid@Hunaids-MacBook-Pro ~ % ssh -i ./key hacker@dojo.pwn.college
+Connected!
+hacker@piping~duplicating-piped-data-with-tee:~$
+```
+2. Run the command `/challenge/run | tee pwn |/challenge/college` this should copy the input of /challenge/pwn into /challenge/college.
+```bash
+acker@piping~duplicating-piped-data-with-tee:~$ /challenge/pwn | tee pwn | /challenge/college
+Processing...
+WARNING: you are overwriting file pwn with tee's output...
+The input to 'college' does not contain the correct secret code! This code 
+should be provided by the 'pwn' command. HINT: use 'tee' to intercept the 
+output of 'pwn' and figure out what the code needs to be.
+```
+3. Read the file `pwn`.
+```bash
+hacker@piping~duplicating-piped-data-with-tee:~$ cat pwn
+Usage: /challenge/pwn --secret [SECRET_ARG]
+
+SECRET_ARG should be "gnzw5wwQ"
+```
+4. To make this program work follow the above format for `/challenge/pwn` followed by `| /challenge/college`.
+```bash
+hacker@piping~duplicating-piped-data-with-tee:~$ /challenge/pwn --secret gnzw5wwQ | /challenge/college
+Processing...
+Correct! Passing secret value to /challenge/college...
+Great job! Here is your flag:
+pwn.college{gnzw5wwQNSF93kioS_WkUhr64AB.QXxITO0wSM3gjNzEzW}
+```
+## What i learned
+1. Tee can be used to duplicate piped data.
+## References
+https://pwn.college/linux-luminarium/piping/ - Duplicating piped data using tee
 
 # Process Substitution for data
 In this challenge you have to compare outputs of 2 files using process substitution and the `diff` command.
@@ -383,4 +420,84 @@ hacker@piping~process-substitution-for-input:~$ diff <(/challenge/print_decoys) 
 1. What is process substitution and how it works
 ## References
 https://pwn.college/linux-luminarium/piping/ - Process Substitution for data
+
+# Writing to multiple programs
+For this challenge you have to use process substitution for writing commands
+## My solve
+**Flag** `pwn.college{cFFdzGq8WyRM3WLxMVnhW3ChFaG.QXwgDN1wSM3gjNzEzW}`
+1. Connect to the dojo host using the ssh command.
+```bash
+hunaid@Hunaids-MacBook-Pro ~ % ssh -i ./key hacker@dojo.pwn.college
+Connected!
+hacker@piping~writing-to-multiple-programs:~$
+```
+2. We have to run `/challenge/hack` and duplicate the output as input for both `/challenge/planet` and `/challenge/the`. For the copying we wll be using the command `tee`. TO redirect the output we will be using `>`
+```bash
+hacker@piping~writing-to-multiple-programs:~$ /challenge/hack | tee >( /challenge/the ) >( /challenge/planet )
+This secret data must directly and simultaneously make it to /challenge/the and 
+/challenge/planet. Don't try to copy-paste it; it changes too fast.
+60847712338519073
+Congratulations, you have duplicated data into the input of two programs! Here 
+is your flag:
+pwn.college{cFFdzGq8WyRM3WLxMVnhW3ChFaG.QXwgDN1wSM3gjNzEzW}
+```
+## What i learned
+1. How to redirect output to multiple files at the same time using `tee` and `|`.
+## References
+https://pwn.college/linux-luminarium/piping/ - Writing to multiple programs.
+
+# Split-piping stderr and stdout
+In this challenge you have to redirect stdout to one program and stderr to another.
+## My solve
+**Flag** `pwn.college{MWURoQ5ar65NjRr2tgTc44gvel8.QXxQDM2wSM3gjNzEzW}`
+1. Connect to the dojo host using the ssh command.
+```bash
+hunaid@Hunaids-MacBook-Pro ~ % ssh -i ./key hacker@dojo.pwn.college
+Connected!
+hacker@piping~split-piping-stderr-and-stdout:~$
+```
+2. `> >(/challenge/planet)` sends stdout into the program /challenge/planet. `2> >(/challenge/the)` sends stderr into the program /challenge/the.
+```bash
+hacker@piping~split-piping-stderr-and-stdout:~$ /challenge/hack > >(/challenge/planet) 2> >(/challenge/the)
+Congratulations, you have learned a redirection technique that even experts 
+struggle with! Here is your flag:
+pwn.college{MWURoQ5ar65NjRr2tgTc44gvel8.QXxQDM2wSM3gjNzEzW}
+```
+## What i learned
+1. How to redirect stdout to one program and stderr to another.
+## References
+https://pwn.college/linux-luminarium/piping/ - Split-piping stderr and stdout
+
+# Named pipes
+This challenge requires you to use temporary named pipes to tranfer data withou storing in the disk.
+## My solve
+**Flag** `pwn.college{oTaKCraY4heGIUeX5pEl9CSAgqk.01MzMDOxwSM3gjNzEzW}
+1. Connect to the dojo host using the ssh command.
+```bash
+hunaid@Hunaids-MacBook-Pro ~ % ssh -i ./key hacker@dojo.pwn.college
+Connected!
+hacker@piping~named-pipes:~$
+```
+2. Create the file `/tmp/flag_fifo` using `mkfifo` as we have to create a FIFO.
+```bash
+hacker@piping~named-pipes:~$ mkfifo /tmp/flag_fifo
+```
+3. While reading redirect the stdout of `/challenge/run` to the file.
+```bash
+hacker@piping~named-pipes:~$  cat /tmp/flag_fifo & /challenge/run > /tmp/flag_fifo
+[1] 174
+You're successfully redirecting /challenge/run to a FIFO at /tmp/flag_fifo! 
+Bash will now try to open the FIFO for writing, to pass it as the stdout of 
+/challenge/run. Recall that operations on FIFOs will *block* until both the 
+read side and the write side is open, so /challenge/run will not actually be 
+launched until you start reading from the FIFO!
+You've correctly redirected /challenge/run's stdout to a FIFO at 
+/tmp/flag_fifo! Here is your flag:
+pwn.college{oTaKCraY4heGIUeX5pEl9CSAgqk.01MzMDOxwSM3gjNzEzW}
+[1]+  Done                    cat /tmp/flag_fifo
+```
+## What i leared
+1. We can create a FIFO using the command `mkfifo`.
+## References
+https://pwn.college/linux-luminarium/piping/ - Named pipes
 
