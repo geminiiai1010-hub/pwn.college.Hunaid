@@ -90,3 +90,23 @@ pwn.college{ofxdwfFdtoomQq8fJ34CscDgydu.0lNxEzNxwSM3gjNzEzW}
 ## References
 https://pwn.college/linux-luminarium/data/ - Extracting the first lines with head
 
+# Exctracting specific section of text
+This challenge requires you to fetch a section of the output of the command.
+## My solve
+**Flag** `pwn.college{EtB7ZRF0TPlmNdgLvMRa9vMx_pm.01NxEzNxwSM3gjNzEzW}`
+1. Connect to the dojo host using the ssh command.
+```bash
+hunaid@Hunaids-MacBook-Pro ~ % ssh -i ./key hacker@dojo.pwn.college
+Connected!
+hacker@data~extracting-specific-sections-of-text:~$
+```
+2. As we have to take output from `/challenge/run` we use that followed by `cut -d " " -f 2 - ` and we have to eliminate newlines so we write `tr -d "\n"`.
+```bash
+hacker@data~extracting-specific-sections-of-text:~$ /challenge/run | cut -d ' ' -f2- | tr -d " \n"
+pwn.college{EtB7ZRF0TPlmNdgLvMRa9vMx_pm.01NxEzNxwSM3gjNzEzW}
+```
+## What i learned
+1. We can use cut to get sections of a text.
+2. Syntax ` cut -d " " -f no. text_file.txt`
+## References
+https://pwn.college/linux-luminarium/data/ - Extracting specific section of text
